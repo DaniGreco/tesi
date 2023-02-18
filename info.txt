@@ -1,4 +1,0 @@
-Lista dei siti: vedere firefox
-
-architettura di sviluppo: client-server
-
