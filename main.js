@@ -72,7 +72,7 @@ async function inDocOutDocDelDoc() {
 
   // drop collection
   await coll.drop();
-
+  
   // show all databases
   myDB.admin().listDatabases().then(function(databases){console.log(databases)});
 }
