@@ -39,6 +39,7 @@ async function establishConnection() {
 }
 establishConnection().catch(console.dir);
 
+/*
 // WRITE/READ/DROP TEST COLLECTION
 async function inDocOutDocDelDoc() {
 
@@ -78,3 +79,5 @@ async function inDocOutDocDelDoc() {
 }
 
 inDocOutDocDelDoc();
+*/
+
