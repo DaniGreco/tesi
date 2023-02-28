@@ -46,7 +46,7 @@ async function inDocOutDocDelDoc() {
   // db and collection creation
   const myDB = client.db('myDB');
   const coll = myDB.collection("helloCollection");
-  
+/*
   // insert doc in collection
   const doc = { hello:1 , ciao:2 , halo:3 };
   const result = await coll.insertOne(doc);
@@ -67,15 +67,15 @@ async function inDocOutDocDelDoc() {
   // print collection
   const cursor1 = coll.find();
   await cursor1.forEach(console.dir);
-
+*/
   // show all databases
   myDB.admin().listDatabases().then(function(databases){console.log(databases)});
 
   // drop collection
-  await coll.drop();
+//  await coll.drop();
   
   // show all databases
-  myDB.admin().listDatabases().then(function(databases){console.log(databases)});
+//  myDB.admin().listDatabases().then(function(databases){console.log(databases)});
 }
 
 inDocOutDocDelDoc();

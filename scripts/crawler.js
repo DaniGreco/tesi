@@ -2,6 +2,7 @@ import { load } from 'cheerio';
 import { getMaxPage, getMaxProduct } from './utils/getMax.js';
 import { generateUrlPages, getUrlFromPage } from './utils/urlsGenerator.js';
 import { doFetchBike } from './utils/fetches.js';
+import { addBike, closeConnection, establishConnection, printData } from './utils/connDB.js';
 
 const urlBikester = 'https://www.bikester.it/biciclette/bici-elettriche/';
 const urlProducts = 'https://www.bikester.it';
@@ -9,6 +10,8 @@ const urlProducts = 'https://www.bikester.it';
 let maxPage;
 let maxProduct;
 let counterBike = 0;
+
+await establishConnection();
 
 fetch(urlBikester)
 
@@ -45,9 +48,11 @@ fetch(urlBikester)
     for(let url of arrayUrl){
         counterBike++;
         process.stdout.write(`parsing bike: ${counterBike}/${arrayUrl.length}\r`);
-        const bike = await doFetchBike(url, urlProducts)
+        const bike = await doFetchBike(url, urlProducts);
+        const res = addBike(bike);
     };
     process.stdout.write('\nDONE\n');
+    closeConnection();
 })
 
 .catch(function(err) {
