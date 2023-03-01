@@ -49,10 +49,14 @@ fetch(urlBikester)
         counterBike++;
         process.stdout.write(`parsing bike: ${counterBike}/${arrayUrl.length}\r`);
         const bike = await doFetchBike(url, urlProducts);
-        const res = addBike(bike);
+        addBike(bike).then(res => {
+            if (res.acknowledged == false){
+                console.log('\nsomething went wrong\n');
+            }
+        });
     };
     process.stdout.write('\nDONE\n');
-    closeConnection();
+    //closeConnection();
 })
 
 .catch(function(err) {

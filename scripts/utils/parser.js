@@ -13,7 +13,7 @@ export function parsePage($){
 }
 
 export function parseBike($){
-    return new Promise((resolve, reject) => {
+    return new Promise(async (resolve, reject) => {
         try {
 
             //// scraping brand, model and id
@@ -57,10 +57,23 @@ export function parseBike($){
                 model:model,
                 current_price: currentPrice,
                 retail_price: retailPrice,
-                data:[]
+                data:{}
             };
 
             //// scraping data
+            objBike = await parseData($, objBike);
+            resolve(objBike);
+        } catch(e){
+            reject(e);
+        };
+    });
+}
+
+
+
+function parseData($, objBike){
+    return new Promise((resolve, reject) => {
+        try {
             $('.pdp_featurelist').children('.pdp_featureitem').each((i, el) => {
                 const chars = {
                     '\n':'',
@@ -70,9 +83,8 @@ export function parseBike($){
                 };
                 // get the group name of the features
                 const groupName = ($(el).children('.pdp_featurelist_group').text()).replace(/[\n ]/g, str => chars[str]);
-                objBike.data[groupName] = [];
-                
-                //if there are no feature, just value then equal this to the group name
+                objBike.data[groupName] = {};
+
                 if($(el).children('.pdp_featurelist_feature').length == 0) {
                     objBike.data[groupName] = $(el).children('.pdp_featurelist_value').text();
                 } // if there are features, for each feature save the respective value, if necessary modify the strings so the names of the features make sense in the json
@@ -83,15 +95,14 @@ export function parseBike($){
                         featureText = featureText.substring(0,featureText.length-2);
                         featureText = featureText.replace(/[\n ()]/g, str => chars[str]);
                         featureText = featureText.replace(/dell'/g, '');
-            
+
                         let valueText = $(el1).next().text();
                         valueText = valueText.replace(/[\n]/g, str => chars[str]);
-            
+
                         objBike.data[groupName][featureText] = valueText;
                     });
                 };
             });
-
             resolve(objBike);
         } catch(e){
             reject(e);

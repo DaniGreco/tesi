@@ -15,7 +15,7 @@ export async function establishConnection() {
         // connect client to server
         await client.connect();
         // establish and verify connection
-        await client.db('bikesDB').command({ ping: 1 });
+        await client.db('admin').command({ ping: 1 });
 
         console.log(`Connected successfully to server at ${uri}`);
         db = client.db('bikesDB');
@@ -36,5 +36,9 @@ export async function addBike(bike) {
 }
 
 export async function printData() {
-    coll.find().forEach(console.dir);
+    await coll.find().forEach(console.dir);
+}
+
+export async function dropColl() {
+    await coll.drop();
 }
