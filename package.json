@@ -1,6 +1,22 @@
 {
+  "name": "devroot",
+  "version": "1.0.0",
+  "description": "dev root to execute frontend and backend concurrently",
+  "main": "root.js",
+  "scripts": {
+    "dev": "concurrently \"cd API && node main\" \"cd public && npm run dev\""
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/DaniGreek/tesi.git"
+  },
+  "author": "Greco Daniele",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/DaniGreek/tesi/issues"
+  },
+  "homepage": "https://github.com/DaniGreek/tesi#readme",
   "dependencies": {
-    "cheerio": "^1.0.0-rc.12",
-    "mongodb": "^5.0.1"
+    "concurrently": "^7.6.0"
   }
 }
