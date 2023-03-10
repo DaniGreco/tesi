@@ -119,7 +119,7 @@ app.get("/logout", protect, (req, res) => {
 });
 
 app.get('/', alwaysAllow, (req, res) => {
-    res.sendFile(path.join(__dirname + '/public/ui/index.html'));
+    res.sendFile(path.join(__dirname + '/public/index.html'));
 });
 
 establishConnection().catch(console.dir);
