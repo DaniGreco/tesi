@@ -8,12 +8,14 @@ import cors from 'cors';
 import helmet from 'helmet';
 import path from 'path';
 import { fileURLToPath } from 'url';
-import * as config from './config.js';
+import * as config from './config/config.js';
 
 import { MongoClient } from 'mongodb';
 const urlDB = 'localhost:27017';
 const uriDB = `mongodb://${urlDB}`;
 const client = new MongoClient(uriDB);
+let coll;
+let db;
 
 async function establishConnection() {
 try {
@@ -23,26 +25,13 @@ try {
     await client.db('admin').command({ ping: 1 });
     console.log(`Connected successfully to server at ${uriDB}\n`);
 
-    const db = client.db('bikesDB');
-    const coll = db.collection("bikes");
+    db = client.db('bikesDB');
+    coll = db.collection("bikes");
 
     //await coll.drop();
     await db.admin().listDatabases().then(function (databases) { 
         //console.log(databases)
     });
-
-    /*}finally {
-    //close client when finish/error
-    await client.close(); 
-    }await coll.find({ brand: 'Bianchi' }).forEach(res =>{
-        console.log(res.data.Attacco.Design);
-    });*/
-    
-    
-    //function(error, result) {
-    //    if(err) throw err;
-    //    console.log(result);
-    //});
 } catch (error) {
     console.error(error);
 }};
@@ -99,7 +88,7 @@ app.use(
     })
 );
 
-app.use(express.static(path.join(__dirname, '././public')));
+//app.use(express.static(path.join(__dirname, '././public')));
 
 app.get('/login', (req, res) => {
     const { authenticated } = req.session;
@@ -118,8 +107,10 @@ app.get("/logout", protect, (req, res) => {
     });
 });
 
-app.get('/', alwaysAllow, (req, res) => {
-    res.sendFile(path.join(__dirname + '/public/index.html'));
+app.get('/api/pricerange', async (req, res) => {
+    const { min = 'min', max = 'max' } = req.query;
+    const result = await coll.find( { current_price: { $gt:+min , $lt:+max } } ).toArray();
+    res.send(result);
 });
 
 establishConnection().catch(console.dir);
