@@ -1,24 +1,31 @@
 <script>
+import { useStore } from '../../stores/useStore';
+
 export default {
+    props: ['idPos'],
     data() {
+        const store = useStore();
         return {
             selected: '',
-            options: [
-                'asdrubale',
-                'Franco Helmut',
-                'Sort'
-            ]
+            options: store.options,
+            id: this.$props.idPos,
         }
     },
-    watch() {
-        return {}
+    methods: {
+        onSelect(e) {
+            this.selected = e.target.value;
+            const store = useStore();
+            if(this.id === 'left'){ store.selectLeft = this.selected; }
+            else if(this.id === 'right'){ store.selectRight = this.selected; }
+            else{console.log('error')};
+        }
     }
 }
 </script>
 
 <template>
-        <select v-model="selected">
-            <option disabled value="">Select graph</option>
+        <select @change="(val) => onSelect(val)">
+            <option selected='' disabled>Select graph</option>
             <option v-for="option in options" :value="option"> {{option}} </option>
         </select>
 </template>

@@ -1,7 +1,7 @@
 <script setup>
 import Title from './components/Title.vue';
 import Slider from './components/Slider.vue';
-import GraphsDiv from './components/graphs/GraphsDiv.vue'
+import GraphsDiv from './components/graphs/GraphsDiv.vue';
 </script> 
 
 <template>
@@ -22,8 +22,8 @@ import GraphsDiv from './components/graphs/GraphsDiv.vue'
         </div>
 
         <div class="wrapperGraphs">
-            <GraphsDiv id="left"/>
-            <GraphsDiv id="right"/>
+            <GraphsDiv idPosition="left"/>
+            <GraphsDiv idPosition="right"/>
         </div>
     </body>
 </template>

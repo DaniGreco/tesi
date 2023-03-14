@@ -1,6 +1,6 @@
 <script>
 import Slider from '@vueform/slider';
-import { usePriceRangeStore } from '../stores/priceRangeStore';
+import { useStore } from '../stores/useStore';
 
 export default {
     components: {
@@ -36,7 +36,7 @@ export default {
     
     methods: {
         onChange(val) {
-            const store = usePriceRangeStore();
+            const store = useStore();
             store.minPrice = val[0];
             store.maxPrice = val[1];
         }

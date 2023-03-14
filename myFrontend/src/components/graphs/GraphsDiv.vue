@@ -1,15 +1,22 @@
 <script setup>
 import Graph from './Graph.vue';
 import Dropdown from '../toggleList/Dropdown.vue';
+
+defineProps({
+    idPosition: {
+        type: String,
+        required: true
+    }
+})
 </script>
 
 <template>
     <div class="wrapper-grid">
         <div class="dropdownDiv">
-            <Dropdown/>
+            <Dropdown :idPos="idPosition" />
         </div>
         <div class="graphDiv">
-            <Graph/>
+            <Graph :idPos="idPosition" />
         </div>
     </div>
 </template>

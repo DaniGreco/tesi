@@ -6,15 +6,11 @@ export const usePriceRangeStore = defineStore('priceRange', {
             minPrice: 0,
             maxPrice: max
         }
-    },
-    actions: {
-        increment() {
-            this.count++
-        },
-    },
+    }
 })
 
-const max = await fetch("http://localhost:3000/api/pricemax")
+const url = "http://localhost:3000/api/pricemax";
+const max = await fetch(url)
     .then((res) => res.json())
     .then((data) => {
         return data.maxPrice;
