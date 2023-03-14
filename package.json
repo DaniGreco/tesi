@@ -4,7 +4,7 @@
   "description": "dev root to execute frontend and backend concurrently",
   "main": "root.js",
   "scripts": {
-    "dev": "concurrently \"cd API && node main\" \"cd frontend && npm run dev\""
+    "dev": "concurrently \"cd API && node main\" \"cd myfrontend && npm run dev\""
   },
   "repository": {
     "type": "git",

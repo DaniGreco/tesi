@@ -81,7 +81,7 @@ app.use(rateLimit(config.rate));
 
 app.use(
      session({
-        secret,
+        secret: secret,
         resave: false,
         saveUninitialized: true,
         store,
@@ -105,6 +105,12 @@ app.get("/logout", protect, (req, res) => {
     req.session.destroy(() => {
         res.send("Successfully logged out");
     });
+});
+
+app.get('/api/pricemax', async (req, res) => {
+    const result = await coll.find().sort({"points":-1}).limit(1).toArray();
+    const max = result[0].current_price;
+    res.send({maxPrice: max});
 });
 
 app.get('/api/pricerange', async (req, res) => {
