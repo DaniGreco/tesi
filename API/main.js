@@ -6,54 +6,19 @@ import { logger } from 'express-winston';
 import responseTime from 'response-time';
 import cors from 'cors';
 import helmet from 'helmet';
-import path from 'path';
-import { fileURLToPath } from 'url';
 import * as config from './config/config.js';
 
-import { MongoClient } from 'mongodb';
-const urlDB = 'localhost:27017';
-const uriDB = `mongodb://${urlDB}`;
-const client = new MongoClient(uriDB);
-let coll;
-let db;
+import { publicRouter } from './routes/publicInteraction.js';
+import { reservedRouter } from './routes/reservedInteraction.js';
 
-async function establishConnection() {
-try {
-    // connect client to server
-    await client.connect();
-    // establish and verify connection
-    await client.db('admin').command({ ping: 1 });
-    console.log(`Connected successfully to server at ${uriDB}\n`);
-
-    db = client.db('bikesDB');
-    coll = db.collection("bikes");
-
-    //await coll.drop();
-    await db.admin().listDatabases().then(function (databases) { 
-        //console.log(databases)
-    });
-} catch (error) {
-    console.error(error);
-}};
+import { crawler } from './scripts/crawler.js';
 
 const app = express();
 const port = config.serverPort;
 const secret = config.sessionSecret;
 const store = new session.MemoryStore();
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
-const alwaysAllow = (_1, _2, next) => {
-    next();
-};
-const protect = (req, res, next) => {
-    const { authenticated } = req.session;
 
-    if (!authenticated) {
-        res.sendStatus(401);
-    } else {
-        next();
-    }
-};
+const intervalId = setInterval(crawler, 1000*60*20); // 1s * 1m * 1h * 1d
 
 app.disable("x-powered-by");
 
@@ -88,38 +53,8 @@ app.use(
     })
 );
 
-//app.use(express.static(path.join(__dirname, '././public')));
-
-app.get('/login', (req, res) => {
-    const { authenticated } = req.session;
-
-    if (!authenticated) {
-        req.session.authenticated = true;
-        res.send('Successfully authenticated');
-    } else {
-        res.send('Already authenticated');
-    }
-});
-
-app.get("/logout", protect, (req, res) => {
-    req.session.destroy(() => {
-        res.send("Successfully logged out");
-    });
-});
-
-app.get('/api/pricemax', async (req, res) => {
-    const result = await coll.find().sort({"points":-1}).limit(1).toArray();
-    const max = result[0].current_price;
-    res.send({maxPrice: max});
-});
-
-app.get('/api/pricerange', async (req, res) => {
-    const { min = 'min', max = 'max' } = req.query;
-    const result = await coll.find( { current_price: { $gt:+min , $lt:+max } } ).toArray();
-    res.send(result);
-});
-
-establishConnection().catch(console.dir);
+app.use('/', reservedRouter);
+app.use('/api', publicRouter);
 
 app.listen(port, () => {
     console.log(`Server running at http://localhost:${port}`);

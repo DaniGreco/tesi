@@ -11,6 +11,7 @@ export default {
         return {
             loaded: false,
             form: { prefix: "€" },
+            minValue: 0,
             maxValue: 0,
             value: [0, 100]
         }
@@ -20,13 +21,14 @@ export default {
         this.loaded = false
 
         try {
-            const maxPrice = await fetch("http://localhost:3000/api/pricemax")
+            const minmax = await fetch("http://localhost:3000/api/pricerange")
                 .then((res) => res.json())
                 .then((data) => {
-                    return data.maxPrice;
+                    return [data.minPrice, data.maxPrice];
                 });
-            this.maxValue = maxPrice;
-            this.value = [0, maxPrice];
+            this.minValue = minmax[0];
+            this.maxValue = minmax[1];
+            this.value = [minmax[0], minmax[1]];
 
             this.loaded = true
         } catch (e) {
@@ -47,9 +49,9 @@ export default {
 <template>
     <div>
         <Slider v-if="loaded" v-model="value"
-            :min="0"
+            :min="minValue"
             :max="maxValue"
-            :merge="1000"
+            :merge="3000"
             :format="form"
             @change="(val) => this.onChange(val)" />
     </div>

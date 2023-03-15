@@ -1,37 +1,48 @@
 <script setup>
-import HelloWorld from './components/HelloWorld.vue'
-import TheWelcome from './components/TheWelcome.vue'
-</script>
+import Title from './components/Title.vue';
+import Slider from './components/Slider.vue';
+import GraphsDiv from './components/graphs/GraphsDiv.vue';
+</script> 
 
 <template>
     <header>
-        <img alt="Vue logo" class="logo" src="./assets/logo.svg" width="125" height="125" />
-
         <div class="wrapper">
-            <HelloWorld msg="You did it!" />
+            <Title msg="E-BIKES"/>
         </div>
     </header>
 
-    <main>
-        <TheWelcome />
-    </main>
+    <body>
+        <div class="wrapperSlide">
+            <div class="sliderText">
+                <p>Price range</p>
+            </div>
+            <div class="sliderTab">
+                <Slider/>
+            </div>
+        </div>
+
+        <div class="wrapperGraphs">
+            <GraphsDiv idPosition="left"/>
+            <GraphsDiv idPosition="right"/>
+        </div>
+    </body>
 </template>
 
 <style scoped>
-header {
-    line-height: 1.5;
+h1 {
+    font-weight: 500;
+    font-size: 2.6rem;
+    top: -10px;
 }
 
-.logo {
-    display: block;
-    margin: 0 auto 2rem;
+p {
+    font-size: 1.2rem;
 }
 
 @media (min-width: 1024px) {
     header {
         display: flex;
         place-items: center;
-        padding-right: calc(var(--section-gap) / 2);
     }
 
     .logo {
@@ -42,6 +53,37 @@ header {
         display: flex;
         place-items: flex-start;
         flex-wrap: wrap;
+        place-items: center;
+        width: 100%;
+    }
+
+    body .wrapperSlide {
+        display: flex;
+        place-items: center;
+        width: 40%;
+        padding: 10px;
+    }
+
+    .sliderText {
+        display: flex;
+        justify-content:center;
+        align-items: center;
+        width: 25%;
+        float: left;
+        padding: 10px;
+        margin-top: -7px;
+    }
+
+    .sliderTab {
+        width: 75%;
+        float: right;
+        padding: 10px;
+    }
+
+    body .wrapperGraphs {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        width: 100%;
     }
 }
 </style>

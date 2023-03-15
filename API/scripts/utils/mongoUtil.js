@@ -6,33 +6,54 @@ import { MongoClient } from 'mongodb';
 
 const url = 'localhost:27017';
 const uri = `mongodb://${url}`;
-let _db;
-let _coll;
+let client;
+export let _db;
+export let _coll;
 
 export async function establishConnection() {
-    try {
-        // creating client that connects to db
-        const client = new MongoClient(uri);
-        // connect client to server
-        await client.connect();
-        // establish and verify connection
-        await client.db('admin').command({ ping: 1 });
+    return new Promise (async (resolve, reject) => {
+        try {
+            // creating client that connects to db
+            client = new MongoClient(uri);
+            // connect client to server
+            await client.connect();
+            // establish and verify connection
+            await client.db('admin').command({ ping: 1 });
 
-        console.log(`Connected successfully to server at ${uri}`);
-        _db = client.db('bikesDB');
-        _coll = _db.collection('bikes');
-
-    } catch (error) {
-      console.error(error);
-    }
+            console.log(`Connected successfully to server at ${uri}`);
+            _db = client.db('bikesDB');
+            _coll = _db.collection('bikes');
+            resolve(client);
+        } catch (error) {
+            reject(error);
+        }
+    })
 }
 
-export async function closeConnection() {
-    await client.close();
+export async function backup() {
+    return new Promise (async (resolve, reject) => {
+        try {
+            const _backup = _db.collection('backup');
+            await _backup.drop();
+            const docs = _coll.find()
+            for await (const doc of docs) { _db.collection('backup').insertOne(doc) }
+            resolve('Backup DONE');
+        } catch (error) {
+            reject(error)
+        }
+    })
 }
 
 export async function dropColl() {
-    await _coll.drop();
+    return new Promise (async (resolve, reject) => {
+        try {
+            await _coll.drop();
+            _coll = _db.collection('bikes')
+            resolve('emptying old collection DONE');
+        } catch (error) {
+            reject(error)
+        }
+    })
 }
 
 export async function addBike(bike) {

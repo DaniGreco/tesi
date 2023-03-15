@@ -2,63 +2,72 @@ import { load } from 'cheerio';
 import { getMaxPage, getMaxProduct } from './utils/getMax.js';
 import { generateUrlPages, getUrlFromPage } from './utils/urlsGenerator.js';
 import { doFetchBike } from './utils/fetches.js';
-import { addBike, closeConnection, establishConnection, printData } from './utils/mongoUtil.js';
+import { addBike, establishConnection, backup, dropColl } from './utils/mongoUtil.js';
 
-const urlBikester = 'https://www.bikester.it/biciclette/bici-elettriche/';
-const urlProducts = 'https://www.bikester.it';
+export async function crawler() {
 
-let maxPage;
-let maxProduct;
-let counterBike = 0;
+    const urlBikester = 'https://www.bikester.it/biciclette/bici-elettriche/';
+    const urlProducts = 'https://www.bikester.it';
 
-await establishConnection();
+    let maxPage;
+    let maxProduct;
+    let counterBike = 0;
 
-fetch(urlBikester)
+    const client = await establishConnection();
 
-.then(function(response) {
-    return response.text();
-})
+    const returnBackup = await backup();
+    console.log(returnBackup);
 
-.then(async function(text) {
-    console.log('fetch successfull - cheerio parsing...');
-    const txt = load(text);
-    maxPage = await getMaxPage(txt);
-    maxProduct = await getMaxProduct(txt);
-    console.log(`number of products found on first page: ${maxProduct}`);
-    return txt;
-})
+    await dropColl();
+    
 
-.then(async function() {
-    return await generateUrlPages(maxPage, urlBikester);
-})
+    fetch(urlBikester)
 
-.then(arrayUrlPages => {
-    return new Promise(async (resolve, reject) => {
-        try {
-            const arrayUrl = await getUrlFromPage(arrayUrlPages);
-            resolve(arrayUrl);
-        } catch(e){
-            reject(e);
-        };
-    });
-})
+        .then(function(response) {
+            return response.text();
+        })
 
-.then(async function(arrayUrl) {
-    console.log(`\nfound ${arrayUrl.length} products to scrape\nscraping phase initiating...`);
-    for(let url of arrayUrl){
-        counterBike++;
-        process.stdout.write(`parsing bike: ${counterBike}/${arrayUrl.length}\r`);
-        const bike = await doFetchBike(url, urlProducts);
-        addBike(bike).then(res => {
-            if (res.acknowledged == false){
-                console.log('\nsomething went wrong\n');
+        .then(async function(text) {
+            console.log('fetch successfull - cheerio parsing...');
+            const txt = load(text);
+            maxPage = await getMaxPage(txt);
+            maxProduct = await getMaxProduct(txt);
+            console.log(`number of products found on first page: ${maxProduct}`);
+            return txt;
+        })
+
+        .then(async function() {
+            return await generateUrlPages(maxPage, urlBikester);
+        })
+
+        .then(arrayUrlPages => {
+            return new Promise(async (resolve, reject) => {
+                try {
+                    const arrayUrl = await getUrlFromPage(arrayUrlPages);
+                    resolve(arrayUrl);
+                } catch(e){
+                    reject(e);
+                };
+            });
+        })
+
+        .then(async function(arrayUrl) {
+            console.log(`\nfound ${arrayUrl.length} products to scrape\nscraping phase initiating...`);
+            for await (let url of arrayUrl){
+                counterBike++;
+                process.stdout.write(`parsing bike: ${counterBike}/${arrayUrl.length}\r`);
+                const bike = await doFetchBike(url, urlProducts);
+                addBike(bike).then(res => {
+                    if (res.acknowledged == false){
+                        console.log('\nsomething went wrong\n');
+                    }
+                });
             }
-        });
-    };
-    process.stdout.write('\nDONE\n');
-    //closeConnection();
-})
+            process.stdout.write('\nDONE\n')
+            return true;
+        })
 
-.catch(function(err) {
-    console.log(err);
-});
+        .catch(function(err) {
+            console.log(err);
+        });
+}
