@@ -1,12 +1,8 @@
 // CONNECT SERVER TO DATABASE
 import { MongoClient } from 'mongodb';
-//const user = encodeURIComponent('root');
-//const pass = encodeURIComponent('12345');
-//const authMechanism = "DEFAULT";
 
 const url = 'localhost:27017';
 const uri = `mongodb://${url}`;
-let client;
 export let _db;
 export let _coll;
 
@@ -14,7 +10,7 @@ export async function establishConnection() {
     return new Promise (async (resolve, reject) => {
         try {
             // creating client that connects to db
-            client = new MongoClient(uri);
+            const client = new MongoClient(uri);
             // connect client to server
             await client.connect();
             // establish and verify connection

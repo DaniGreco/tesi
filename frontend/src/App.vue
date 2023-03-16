@@ -2,6 +2,7 @@
 import Title from './components/Title.vue';
 import Slider from './components/Slider.vue';
 import GraphsDiv from './components/graphs/GraphsDiv.vue';
+import Form from './components/Form.vue';
 </script> 
 
 <template>
@@ -12,12 +13,17 @@ import GraphsDiv from './components/graphs/GraphsDiv.vue';
     </header>
 
     <body>
-        <div class="wrapperSlide">
-            <div class="sliderText">
-                <p>Price range</p>
+        <div class="wrapperTop">
+            <div class="wrapperSlide">
+                <div class="sliderText">
+                    <p>Price range</p>
+                </div>
+                <div class="sliderTab">
+                    <Slider/>
+                </div>
             </div>
-            <div class="sliderTab">
-                <Slider/>
+            <div class="wrapperForm">
+                <Form/>
             </div>
         </div>
 
@@ -60,13 +66,13 @@ p {
     body .wrapperSlide {
         display: flex;
         place-items: center;
-        width: 40%;
+        width: 80%;
         padding: 10px;
     }
 
     .sliderText {
         display: flex;
-        justify-content:center;
+        justify-content: center;
         align-items: center;
         width: 25%;
         float: left;
@@ -78,6 +84,17 @@ p {
         width: 75%;
         float: right;
         padding: 10px;
+    }
+
+    .wrapperTop {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        width: 100%;
+    }
+
+    .wrapperForm {
+        display: grid;
+        grid-template-columns: 1fr 2fr 2fr 2fr;
     }
 
     body .wrapperGraphs {

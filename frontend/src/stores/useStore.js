@@ -30,10 +30,10 @@ export const useStore = defineStore('store', () => {
     ]);
     const selectLeft = ref('');
     const selectRight = ref('');
-    let dataLeftLabels = ref(['a', 'b']);
-    let dataLeftData = ref([5, 10]);
-    let dataRightLabels = ref(['a', 'b']);
-    let dataRightData = ref([10, 5]);
+    let dataLeftLabels = ref([]);
+    let dataLeftData = ref([]);
+    let dataRightLabels = ref([]);
+    let dataRightData = ref([]);
 
     watch([selectLeft, minPrice, maxPrice], async (value) => {
         const selOpt = await switchOption(value[0]);

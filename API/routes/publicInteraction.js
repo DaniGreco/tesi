@@ -8,6 +8,7 @@ let db;
 
 async function establishConnection() {
     try {
+
         // connect client to server
         await client.connect();
         // establish and verify connection
@@ -16,16 +17,14 @@ async function establishConnection() {
     
         db = client.db('bikesDB');
         coll = db.collection("bikes");
-    
-        //await coll.drop();
-        await db.admin().listDatabases().then(function (databases) { 
-            //console.log(databases)
-        });
+
     } catch (error) {
         console.error(error);
 }};
 
 establishConnection().catch(console.dir);
+
+
 
 const alwaysAllow = (_1, _2, next) => {
     next();
